@@ -11,10 +11,6 @@ export default function ChatIdeaGenerator() {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
 
-  const selectCategory = (category: string) => {
-    setSelectedCategory(category);
-  };
-
   const generateRandomIdea = async () => {
     setIsGenerating(true);
 
@@ -70,48 +66,38 @@ export default function ChatIdeaGenerator() {
 
         {/* Category Buttons */}
         <div className="flex flex-wrap justify-center gap-6">
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => selectCategory("kocak")}
-            className={`px-8 py-4 text-xl font-black border-4 border-black hover:bg-yellow-400 transform transition-all hover:scale-105 hover:-translate-y-1 ${
-              selectedCategory === "kocak"
-                ? "bg-yellow-400 text-black shadow-[8px_8px_0px_0px_#000]"
-                : "bg-white text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000]"
-            }`}
-          >
-            KOCAK
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => selectCategory("filosofis")}
-            className={`px-8 py-4 text-xl font-black border-4 border-black hover:bg-yellow-400 transform transition-all hover:scale-105 hover:-translate-y-1 ${
-              selectedCategory === "filosofis"
-                ? "bg-yellow-400 text-black shadow-[8px_8px_0px_0px_#000]"
-                : "bg-white text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000]"
-            }`}
-          >
-            FILOSOFIS
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => selectCategory("nostalgia")}
-            className={`px-8 py-4 text-xl font-black border-4 border-black hover:bg-yellow-400 transform transition-all hover:scale-105 hover:-translate-y-1 ${
-              selectedCategory === "nostalgia"
-                ? "bg-yellow-400 text-black shadow-[8px_8px_0px_0px_#000]"
-                : "bg-white text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000]"
-            }`}
-          >
-            NOSTALGIA
-          </Button>
+          {[
+            { label: "KOCAK", value: "kocak" },
+            { label: "FILOSOFIS", value: "filosofis" },
+            { label: "NOSTALGIA", value: "nostalgia" },
+          ].map((cat) => (
+            <Button
+              key={cat.value}
+              variant="outline"
+              size="lg"
+              onClick={() =>
+                selectedCategory === cat.value
+                  ? setSelectedCategory("")
+                  : setSelectedCategory(cat.value)
+              }
+              className={`text-xl font-black border-4 border-black hover:bg-yellow-400 transform transition-all hover:scale-105 hover:-translate-y-1 ${
+                selectedCategory === cat.value
+                  ? "bg-yellow-400 text-black shadow-[8px_8px_0px_0px_#000]"
+                  : "bg-white text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000]"
+              }`}
+            >
+              {cat.label}
+            </Button>
+          ))}
           <Button
             variant="outline"
             size="lg"
             onClick={openCustomPopup}
-            className={`px-8 py-4 text-xl font-black border-4 border-black transform transition-all hover:scale-105 hover:-translate-y-1 ${
-              selectedCategory === "custom"
+            className={`text-xl font-black border-4 border-black transform transition-all hover:scale-105 hover:-translate-y-1 ${
+              selectedCategory !== "" &&
+              selectedCategory !== "nostalgia" &&
+              selectedCategory !== "filosofis" &&
+              selectedCategory !== "kocak"
                 ? "bg-yellow-400 text-black shadow-[8px_8px_0px_0px_#000]"
                 : "bg-white text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000]"
             }`}
@@ -158,6 +144,28 @@ export default function ChatIdeaGenerator() {
             {isGenerating ? "GENERATING... 🎲" : "KASIH IDE NGOBROL DONG! 💬"}
           </Button>
         </div>
+        {/* Footer */}
+        <footer className="text-center text-sm text-black opacity-70 mt-8">
+          <p>
+            Created by
+            <a
+              href="https://github.com/AbdillahHamzahAli"
+              className="text-blue-500 hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {" "}
+              Hamzah{" "}
+            </a>
+            powered by{" "}
+            <a
+              href="https://gemini.google.com"
+              className="text-red-500 hover:underline"
+            >
+              {""}Gemini ✨
+            </a>
+          </p>
+        </footer>
       </div>
 
       {/* Custom Input Popup */}
