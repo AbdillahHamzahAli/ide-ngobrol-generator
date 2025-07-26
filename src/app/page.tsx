@@ -138,7 +138,7 @@ export default function ChatIdeaGenerator() {
           ) : (
             <div className="text-center space-y-2">
               <p className="text-base text-center text-black font-bold opacity-40">
-                Klik tombol di bawah untuk generate ide with AI! 🚀
+                Klik tombol di bawah untuk generate ide dengan AI! 🚀
               </p>
             </div>
           )}
