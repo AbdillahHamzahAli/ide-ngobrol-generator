@@ -1,103 +1,209 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+
+export default function ChatIdeaGenerator() {
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [currentIdea, setCurrentIdea] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+
+  const selectCategory = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  const generateRandomIdea = async () => {
+    setIsGenerating(true);
+
+    const randomIdea = await fetch("/api/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ category: selectedCategory }),
+    })
+      .then((res) => res.json())
+      .then((data) => data.idea)
+      .catch((error) => {
+        console.error("Error fetching idea:", error);
+        return "Maaf, terjadi kesalahan saat mengambil ide. Silakan coba lagi.";
+      });
+
+    setCurrentIdea(randomIdea);
+    setIsGenerating(false);
+  };
+
+  const handleCustomSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowPopup(false);
+    await generateRandomIdea();
+  };
+
+  const openCustomPopup = () => {
+    setShowPopup(true);
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-[#f5f1e8] flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-3xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-6">
+          <h1 className="text-5xl md:text-6xl font-black text-black leading-tight">
+            <span className="inline-block relative">
+              Ide Ngobrol
+              <span className="absolute -top-2 -right-2 text-2xl">✨</span>
+            </span>
+            <br />
+            <span className="bg-yellow-400 px-4 py-2 border-4 border-black inline-block transform -rotate-1 relative">
+              Generator
+              <span className="absolute -bottom-2 -left-2 text-2xl">⭐</span>
+            </span>
+          </h1>
+          <p className="text-xl md:text-2xl text-black font-bold max-w-2xl mx-auto">
+            Bingung mau ngobrol apa? Pilih kategori dan dapatkan ide percakapan
+            yang menarik!
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Category Buttons */}
+        <div className="flex flex-wrap justify-center gap-6">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => selectCategory("kocak")}
+            className={`px-8 py-4 text-xl font-black border-4 border-black hover:bg-yellow-400 transform transition-all hover:scale-105 hover:-translate-y-1 ${
+              selectedCategory === "kocak"
+                ? "bg-yellow-400 text-black shadow-[8px_8px_0px_0px_#000]"
+                : "bg-white text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000]"
+            }`}
+          >
+            KOCAK
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => selectCategory("filosofis")}
+            className={`px-8 py-4 text-xl font-black border-4 border-black hover:bg-yellow-400 transform transition-all hover:scale-105 hover:-translate-y-1 ${
+              selectedCategory === "filosofis"
+                ? "bg-yellow-400 text-black shadow-[8px_8px_0px_0px_#000]"
+                : "bg-white text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000]"
+            }`}
+          >
+            FILOSOFIS
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => selectCategory("nostalgia")}
+            className={`px-8 py-4 text-xl font-black border-4 border-black hover:bg-yellow-400 transform transition-all hover:scale-105 hover:-translate-y-1 ${
+              selectedCategory === "nostalgia"
+                ? "bg-yellow-400 text-black shadow-[8px_8px_0px_0px_#000]"
+                : "bg-white text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000]"
+            }`}
+          >
+            NOSTALGIA
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={openCustomPopup}
+            className={`px-8 py-4 text-xl font-black border-4 border-black transform transition-all hover:scale-105 hover:-translate-y-1 ${
+              selectedCategory === "custom"
+                ? "bg-yellow-400 text-black shadow-[8px_8px_0px_0px_#000]"
+                : "bg-white text-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[8px_8px_0px_0px_#000]"
+            }`}
+          >
+            LAIN-NYA
+          </Button>
+        </div>
+
+        {/* Idea Display Area */}
+        <Card className="w-full min-h-[200px] flex items-center justify-center p-8 bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] transform">
+          {isGenerating ? (
+            <div className="text-center">
+              <div className="text-4xl mb-4 animate-spin">🎲</div>
+              <p className="text-xl text-black font-bold">
+                Sedang mencari ide...
+              </p>
+            </div>
+          ) : currentIdea ? (
+            <div className="text-center space-y-4">
+              <p className="text-xl md:text-2xl text-center text-black font-bold leading-relaxed">
+                {currentIdea}
+              </p>
+            </div>
+          ) : (
+            <div className="text-center space-y-2">
+              <p className="text-base text-center text-black font-bold opacity-40">
+                Klik tombol di bawah untuk generate ide with AI! 🚀
+              </p>
+            </div>
+          )}
+        </Card>
+
+        {/* Main Action Button */}
+        <div className="w-full text-center">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={generateRandomIdea}
+            disabled={isGenerating}
+            className={`w-full max-w-md text-xl md:text-2xl font-black py-6 px-8 bg-yellow-400 text-black border-4 border-black shadow-[8px_8px_0px_0px_#000] transform transition-all hover:scale-105 hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_#000] ${
+              isGenerating ? "animate-pulse scale-95" : ""
+            }`}
+          >
+            {isGenerating ? "GENERATING... 🎲" : "KASIH IDE NGOBROL DONG! 💬"}
+          </Button>
+        </div>
+      </div>
+
+      {/* Custom Input Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 bg-amber-100 bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white border-4 border-black shadow-[12px_12px_0px_0px_#000] p-8 max-w-md w-full transform">
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl font-black text-black mb-2">
+                  TAMBAH IDE CUSTOM 💡
+                </h2>
+                <p className="text-sm font-bold text-black opacity-70">
+                  Masukkan ide percakapan kamu sendiri!
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <Input
+                  type="text"
+                  placeholder="Contoh: Cerita tentang mimpi paling aneh yang pernah kamu alami..."
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full text-lg py-3 px-4 border-4 border-black font-bold focus:ring-0 focus:border-black"
+                />
+
+                <div className="flex gap-4">
+                  <Button
+                    onClick={handleCustomSubmit}
+                    className="flex-1 text-lg font-black py-3 bg-yellow-400 text-black border-4 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] transform hover:scale-105"
+                  >
+                    TAMBAH ✅
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowPopup(false);
+                    }}
+                    variant="outline"
+                    className="flex-1 text-lg font-black py-3 bg-white text-black border-4 border-black shadow-[4px_4px_0px_0px_#000] hover:shadow-[6px_6px_0px_0px_#000] transform hover:scale-105"
+                  >
+                    BATAL ❌
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
